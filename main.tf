@@ -55,10 +55,26 @@ module "ALB" {
   ip_address_type    = "ipv4"
 }
 
-module "security" {
+module "security_group" {
   source = "./modules/security"
-  vpc_id = module.VPC.vpc_id
+  count = length(var.security_groups)
+  name        = var.security_groups[count.index].name
+  description = var.security_groups[count.index].description
+  vpc_id      = var.security_groups[count.index].vpc_id
+
+  dynamic "ingress" {
+    for_each = var.security_groups[count.index].ingress_rules
+    content {
+      from_port   = ingress.value.from_port
+      to_port     = ingress.value.to_port
+      protocol    = ingress.value.protocol
+      cidr_blocks = ingress.value.cidr_block
+      source_security_group_id = ingress.value.source_security_group_id
+      security_group_id = ingress.value.security_group_id
+    }
+  }
 }
+
 
 module "RDS" {
   source          = "./modules/rds"

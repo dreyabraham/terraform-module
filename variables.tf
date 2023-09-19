@@ -24,7 +24,7 @@ variable "enable_classiclink_dns_support" {
 
 variable "preferred_number_of_public_subnets" {
   type        = number
-  description = "Number of public subnets"e
+  description = "Number of public subnets"
 }
 
 variable "preferred_number_of_private_subnets" {
@@ -74,4 +74,44 @@ variable "master-username" {
 variable "master-password" {
   type        = string
   description = "RDS master password"
+}
+
+variable "security_group_name" {
+  type        = string
+  description = "Name of security group - not required if create_sg is false"
+}
+
+variable "security_group_description" {
+  type        = string
+  description = "Description of security group"
+}
+
+variable "ingress_cidr_blocks" {
+  type        = list(any)
+  description = "List of IPv4 CIDR ranges to use on all ingress rules"
+}
+
+variable "ingress_rules" {
+  type        = list(any)
+  description = " List of ingress rules to create by name"
+}
+
+variable "ingress_with_cidr_blocks" {
+  type        = list(any)
+  description = "List of ingress rules to create where 'cidr_blocks' is used"
+}
+
+variable "egress_cidr_blocks" {
+  type        = list(any)
+  description = "List of IPv4 CIDR ranges to use on all egress rules"
+}
+
+variable "egress_rules" {
+  type        = list(any)
+  description = "List of egress rules to create by name"
+}
+
+variable "egress_with_cidr_blocks" {
+  type        = list(any)
+  description = "List of egress rules to create where 'cidr_blocks' is used"
 }
