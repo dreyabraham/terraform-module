@@ -24,7 +24,7 @@ variable "enable_classiclink_dns_support" {
 
 variable "preferred_number_of_public_subnets" {
   type        = number
-  description = "Number of public subnets"
+  description = "Number of public subnets"e
 }
 
 variable "preferred_number_of_private_subnets" {
