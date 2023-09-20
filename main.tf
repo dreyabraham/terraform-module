@@ -1,5 +1,9 @@
+#############################
+##creating bucket for s3 backend
+#########################
+
 resource "aws_s3_bucket" "terraform-state" {
-  bucket        = "pbl18"
+  bucket = "pbl18"
   force_destroy = true
 }
 resource "aws_s3_bucket_versioning" "version" {
@@ -27,8 +31,10 @@ resource "aws_dynamodb_table" "terraform_locks" {
   }
 }
 
+
+# creating VPC
 module "VPC" {
-  source                              = "./modules/networking"
+  source                              = "./modules/VPC"
   region                              = var.region
   vpc_cidr                            = var.vpc_cidr
   enable_dns_support                  = var.enable_dns_support
@@ -42,16 +48,17 @@ module "VPC" {
 
 #Module for Application Load balancer, this will create Extenal Load balancer and internal load balancer
 module "ALB" {
-  source        = "./modules/alb"
-  vpc_id        = module.VPC.vpc_id
-  public-sg     = module.security.ext-alb-sg
-  private-sg    = module.security.int-alb-sg
-  public-sbn-1  = module.VPC.public_subnets-1
-  public-sbn-2  = module.VPC.public_subnets-2
-  private-sbn-1 = module.VPC.private_subnets-1
-  private-sbn-2 = module.VPC.private_subnets-2
-
-  ip_address_type = "ipv4"
+  source             = "./modules/ALB"
+  name               = "ACS-ext-alb"
+  vpc_id             = module.VPC.vpc_id
+  public-sg          = module.security.ALB-sg
+  private-sg         = module.security.IALB-sg
+  public-sbn-1       = module.VPC.public_subnets-1
+  public-sbn-2       = module.VPC.public_subnets-2
+  private-sbn-1      = module.VPC.private_subnets-1
+  private-sbn-2      = module.VPC.private_subnets-2
+  load_balancer_type = "application"
+  ip_address_type    = "ipv4"
 }
 
 module "security" {
@@ -60,25 +67,25 @@ module "security" {
 }
 
 module "RDS" {
-  source          = "./modules/rds"
+  source          = "./modules/RDS"
   db-password     = var.master-password
   db-username     = var.master-username
   db-sg           = [module.security.datalayer-sg]
   private_subnets = [module.VPC.private_subnets-3, module.VPC.private_subnets-4]
 }
 
-# The Module creates instance
-module "ec2" {
-  source          = "./modules/ec2"
-  ami             = var.aws_ami_id
+# The Module creates instances for ACS
+module "compute" {
+  source          = "./modules/compute"
+  ami-acs     = var.ami
   subnets-compute = module.VPC.public_subnets-1
-  sg-compute      = [module.security.webserver-sg]
+  sg-compute      = [module.security.ALB-sg]
   keypair         = var.keypair
 }
 
-module "vpc_endpoint" {
-  source       = "./modules/vpc-endpoint"
-  vpc_id       = module.VPC.vpc_id
-  service_name = base64decode(null)
-  vpc_endpoint = [module.security.vpc_endpoint-sg]
+module "my_vpc_endpoint" {
+  source             = "./modules/endpoint"  # Adjust the source path as needed
+  vpc_id             = module.VPC.vpc_id          # Replace with your VPC ID
+  security_group_ids = aws_security_group.ACS["ext-alb-sg"].id
+ # Replace with your security group IDs (optional)
 }

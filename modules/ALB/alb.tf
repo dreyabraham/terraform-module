@@ -1,3 +1,7 @@
+# ----------------------------
+#External Load balancer for reverse proxy nginx
+#---------------------------------
+
 resource "aws_lb" "ext-alb" {
   name            = var.name
   internal        = false
@@ -18,7 +22,7 @@ resource "aws_lb" "ext-alb" {
 }
 
 #--- create a target group for the external load balancer
-resource "aws_lb_target_group" "webserver-tgt" {
+resource "aws_lb_target_group" "nginx-tgt" {
   health_check {
     interval            = 10
     path                = "/healthstatus"
@@ -27,12 +31,17 @@ resource "aws_lb_target_group" "webserver-tgt" {
     healthy_threshold   = 5
     unhealthy_threshold = 2
   }
-  name        = "webserver=tgt"
+  name        = "nginx-tgt"
   port        = 443
   protocol    = "HTTPS"
   target_type = "instance"
   vpc_id      = var.vpc_id
 }
+
+
+# ----------------------------
+#Internal Load Balancers for webservers
+#---------------------------------
 
 resource "aws_lb" "ialb" {
   name     = "ialb"
@@ -54,9 +63,10 @@ resource "aws_lb" "ialb" {
   load_balancer_type = var.load_balancer_type
 }
 
+
 # --- target group  for wordpress -------
 
-resource "aws_lb_target_group" "webapp-tgt" {
+resource "aws_lb_target_group" "wordpress-tgt" {
   health_check {
     interval            = 10
     path                = "/healthstatus"
@@ -66,9 +76,45 @@ resource "aws_lb_target_group" "webapp-tgt" {
     unhealthy_threshold = 2
   }
 
-  name     = "webapp-tgt"
+  name     = "wordpress-tgt"
    port        = 443
   protocol    = "HTTPS"
   target_type = "instance"
   vpc_id      = var.vpc_id
   }
+
+
+
+
+# --- target group for tooling -------
+
+resource "aws_lb_target_group" "tooling-tgt" {
+  health_check {
+    interval            = 10
+    path                = "/healthstatus"
+    protocol            = "HTTPS"
+    timeout             = 5
+    healthy_threshold   = 5
+    unhealthy_threshold = 2
+  }
+
+  name        = "david-tooling-tgt"
+  port        = 443
+  protocol    = "HTTPS"
+  target_type = "instance"
+  vpc_id      = var.vpc_id
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

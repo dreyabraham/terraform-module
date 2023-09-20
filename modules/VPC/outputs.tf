@@ -19,6 +19,19 @@ output "private_subnets-2" {
   description = "The second private subnet"
 }
 
+
+output "private_subnets-3" {
+  value       = aws_subnet.private[2].id
+  description = "The third private subnet"
+}
+
+
+output "private_subnets-4" {
+  value       = aws_subnet.private[3].id
+  description = "The fourth private subnet"
+}
+
+
 output "vpc_id" {
   value = aws_vpc.main.id
 }

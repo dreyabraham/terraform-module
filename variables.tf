@@ -34,7 +34,7 @@ variable "preferred_number_of_private_subnets" {
 
 variable "name" {
   type    = string
-  default = "windows"
+  default = "ACS"
 
 }
 
@@ -49,10 +49,9 @@ variable "environment" {
   description = "Enviroment"
 }
 
-variable "aws_ami_id" {
+variable "ami" {
   type        = string
   description = "AMI ID for the launch template"
-  default = "ami-05705f8465db448b7"
 }
 
 
@@ -75,4 +74,4 @@ variable "master-username" {
 variable "master-password" {
   type        = string
   description = "RDS master password"
-}  
+}

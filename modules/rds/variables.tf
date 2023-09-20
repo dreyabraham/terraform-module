@@ -1,3 +1,4 @@
+
 variable "db-username" {
   type        = string
   description = "The master user name"

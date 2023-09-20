@@ -1,3 +1,4 @@
+# create all security groups dynamically
 resource "aws_security_group" "ACS" {
   for_each    = local.security_groups
   name        = each.value.name
@@ -19,3 +20,4 @@ resource "aws_security_group" "ACS" {
     },
   )
 }
+

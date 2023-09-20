@@ -35,3 +35,21 @@ variable "ip_address_type" {
   description = "IP address for the ALB"
 
 }
+
+variable "load_balancer_type" {
+  type        = string
+  description = "te type of Load Balancer"
+}
+
+variable "tags" {
+  description = "A mapping of tags to assign to all resources."
+  type        = map(string)
+  default     = {}
+}
+
+
+variable "name" {
+    type = string
+    description = "name of the loadbalancer"
+  
+}

@@ -1,4 +1,4 @@
-# creating security groups
+# creating dynamic ingress security groups
 locals {
   security_groups = {
     ext-alb-sg = {
@@ -7,31 +7,40 @@ locals {
 
     }
 
- # security group for IALB
+    # security group for bastion
+    bastion-sg = {
+      name        = "bastion-sg"
+      description = "for bastion instances"
+    }
+
+    # security group for nginx
+    nginx-sg = {
+      name        = "nginx-sg"
+      description = "nginx instances"
+    }
+
+    # security group for IALB
     int-alb-sg = {
       name        = "int-alb-sg"
       description = "IALB security group"
     }
 
 
-# security group for webservers
+    # security group for webservers
     webserver-sg = {
       name        = "webserver-sg"
       description = "webservers security group"
-    }    
+    }
 
- # security group for data-layer
+
+    # security group for data-layer
     datalayer-sg = {
       name        = "datalayer-sg"
       description = "data layer security group"
 
 
     }
+  }
+}
 
- # security group for vpc-endpoint
-    datalayer-sg = {
-      name        = "vpc-endpoint-sg"
-      description = "data layer security group"
-  }   
-}
-}
+
