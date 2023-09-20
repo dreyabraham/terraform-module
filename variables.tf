@@ -49,9 +49,10 @@ variable "environment" {
   description = "Enviroment"
 }
 
-variable "ami" {
+variable "aws_ami_id" {
   type        = string
   description = "AMI ID for the launch template"
+  default = "ami-05705f8465db448b7"
 }
 
 
@@ -74,44 +75,4 @@ variable "master-username" {
 variable "master-password" {
   type        = string
   description = "RDS master password"
-}
-
-variable "security_group_name" {
-  type        = string
-  description = "Name of security group - not required if create_sg is false"
-}
-
-variable "security_group_description" {
-  type        = string
-  description = "Description of security group"
-}
-
-variable "ingress_cidr_blocks" {
-  type        = list(any)
-  description = "List of IPv4 CIDR ranges to use on all ingress rules"
-}
-
-variable "ingress_rules" {
-  type        = list(any)
-  description = " List of ingress rules to create by name"
-}
-
-variable "ingress_with_cidr_blocks" {
-  type        = list(any)
-  description = "List of ingress rules to create where 'cidr_blocks' is used"
-}
-
-variable "egress_cidr_blocks" {
-  type        = list(any)
-  description = "List of IPv4 CIDR ranges to use on all egress rules"
-}
-
-variable "egress_rules" {
-  type        = list(any)
-  description = "List of egress rules to create by name"
-}
-
-variable "egress_with_cidr_blocks" {
-  type        = list(any)
-  description = "List of egress rules to create where 'cidr_blocks' is used"
-}
+}  

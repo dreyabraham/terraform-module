@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "terraform-state" {
-  bucket = "pbl18"
+  bucket        = "pbl18"
   force_destroy = true
 }
 resource "aws_s3_bucket_versioning" "version" {
@@ -42,39 +42,22 @@ module "VPC" {
 
 #Module for Application Load balancer, this will create Extenal Load balancer and internal load balancer
 module "ALB" {
-  source             = "./modules/alb"
-  name               = "ACS-ext-alb"
-  vpc_id             = module.VPC.vpc_id
-  public-sg          = module.security.ext-alb-sg
-  private-sg         = module.security.int-alb-sg
-  public-sbn-1       = module.VPC.public_subnets-1
-  public-sbn-2       = module.VPC.public_subnets-2
-  private-sbn-1      = module.VPC.private_subnets-1
-  private-sbn-2      = module.VPC.private_subnets-2
-  load_balancer_type = "application"
-  ip_address_type    = "ipv4"
+  source        = "./modules/alb"
+  vpc_id        = module.VPC.vpc_id
+  public-sg     = module.security.ext-alb-sg
+  private-sg    = module.security.int-alb-sg
+  public-sbn-1  = module.VPC.public_subnets-1
+  public-sbn-2  = module.VPC.public_subnets-2
+  private-sbn-1 = module.VPC.private_subnets-1
+  private-sbn-2 = module.VPC.private_subnets-2
+
+  ip_address_type = "ipv4"
 }
 
-module "security_group" {
-  source = "./modules/security"
-  count = length(var.security_groups)
-  name        = var.security_groups[count.index].name
-  description = var.security_groups[count.index].description
-  vpc_id      = var.security_groups[count.index].vpc_id
-
-  dynamic "ingress" {
-    for_each = var.security_groups[count.index].ingress_rules
-    content {
-      from_port   = ingress.value.from_port
-      to_port     = ingress.value.to_port
-      protocol    = ingress.value.protocol
-      cidr_blocks = ingress.value.cidr_block
-      source_security_group_id = ingress.value.source_security_group_id
-      security_group_id = ingress.value.security_group_id
-    }
-  }
+module "security" {
+  source = "./modules/Security"
+  vpc_id = module.VPC.vpc_id
 }
-
 
 module "RDS" {
   source          = "./modules/rds"
@@ -85,17 +68,17 @@ module "RDS" {
 }
 
 # The Module creates instance
-module "compute" {
+module "ec2" {
   source          = "./modules/ec2"
-  ami-instance    = var.ami
+  ami             = var.aws_ami_id
   subnets-compute = module.VPC.public_subnets-1
   sg-compute      = [module.security.webserver-sg]
   keypair         = var.keypair
 }
 
- module "vpc_endpoint" {
-   source = "./modules/vpc-endpoint"
-   vpc_id = module.VPC.vpc_id
-   service_name = base64decode(null)
-   vpc_endpoint = [module.security.vpc_endpoint-sg]
- }
+module "vpc_endpoint" {
+  source       = "./modules/vpc-endpoint"
+  vpc_id       = module.VPC.vpc_id
+  service_name = base64decode(null)
+  vpc_endpoint = [module.security.vpc_endpoint-sg]
+}

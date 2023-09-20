@@ -16,3 +16,9 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+
+variable "aws_ami_id" {
+    type = string
+    description = "id for ami"
+    default = "ami-05705f8465db448b7"
+}

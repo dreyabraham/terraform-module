@@ -1,15 +1,10 @@
-variable "security_groups" {
-  description = "List of security groups to create"
-  type        = list(object({
-    name        = string
-    description = string
-    vpc_id      = string
-    ingress_rules = list(object({
-      from_port   = number
-      to_port     = number
-      protocol    = string
-      cidr_blocks = list(string)
-      
-    }))
-  }))
+variable "vpc_id" {
+  type        = string
+  description = "the vpc id"
+}
+
+variable "tags" {
+  description = "A mapping of tags to assign to all resources."
+  type        = map(string)
+  default     = {}
 }
