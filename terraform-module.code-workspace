@@ -1,0 +1,12 @@
+{
+	"folders": [
+		{
+			"name": "terraform-module",
+			"path": "."
+		},
+		{
+			"path": "../PBL-project-18/modules"
+		}
+	],
+	"settings": {}
+}
